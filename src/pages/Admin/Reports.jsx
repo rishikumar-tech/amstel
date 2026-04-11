@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
     Calendar, Download, Filter, FileText, TrendingUp, DollarSign, ShoppingBag, ArrowRight, Clock, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,7 +14,7 @@ const Reports = () => {
     const [filter, setFilter] = useState('30_days');
     const [dates, setDates] = useState({ start: '', end: '' });
 
-    const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
 
     const fetchReport = async () => {
         try {
@@ -57,8 +57,8 @@ const Reports = () => {
             o.order_status,
             o.payment_status
         ]);
-        
-        let csvContent = "data:text/csv;charset=utf-8," 
+
+        let csvContent = "data:text/csv;charset=utf-8,"
             + headers.join(',') + "\n"
             + rows.map(r => r.join(',')).join("\n");
 
@@ -90,7 +90,7 @@ const Reports = () => {
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Left: Filters Area */}
                     <div className="lg:w-80 flex flex-col gap-8">
-                         <div className="flex flex-col gap-6 glass rounded-[32px] p-8 border border-white/5 bg-white/5 shadow-2xl">
+                        <div className="flex flex-col gap-6 glass rounded-[32px] p-8 border border-white/5 bg-white/5 shadow-2xl">
                             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 italic flex items-center gap-2">
                                 <Filter size={14} className="text-secondary" /> RANGE FILTER
                             </h4>
@@ -104,7 +104,7 @@ const Reports = () => {
                                     { id: '10_years', name: 'LAST 10 YEARS' },
                                     { id: 'custom', name: 'CUSTOM RANGE' },
                                 ].map((opt) => (
-                                    <button 
+                                    <button
                                         key={opt.id} onClick={() => setFilter(opt.id)}
                                         className={`h-12 px-6 rounded-xl flex items-center justify-between text-[10px] font-black uppercase tracking-widest italic transition-all ${filter === opt.id ? 'bg-secondary text-white shadow-lg' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
                                     >
@@ -112,36 +112,36 @@ const Reports = () => {
                                     </button>
                                 ))}
                             </div>
-                         </div>
+                        </div>
 
-                         <AnimatePresence>
-                             {filter === 'custom' && (
-                                 <motion.div 
+                        <AnimatePresence>
+                            {filter === 'custom' && (
+                                <motion.div
                                     initial={{ opacity: 0, height: 0 }}
                                     animate={{ opacity: 1, height: 'auto' }}
                                     exit={{ opacity: 0, height: 0 }}
                                     className="flex flex-col gap-6 glass rounded-[32px] p-8 border border-white/5 bg-white/5 shadow-2xl"
-                                 >
-                                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 italic">CUSTOM PERIOD</h4>
-                                     <div className="flex flex-col gap-4">
+                                >
+                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 italic">CUSTOM PERIOD</h4>
+                                    <div className="flex flex-col gap-4">
                                         <div className="flex flex-col gap-2">
                                             <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">FROM DATE</span>
-                                            <input 
+                                            <input
                                                 type="date" value={dates.start} onChange={(e) => setDates({ ...dates, start: e.target.value })}
-                                                className="bg-black/50 border border-white/5 rounded-xl h-12 px-4 text-[10px] font-black uppercase italic text-white focus:outline-none focus:border-secondary" 
+                                                className="bg-black/50 border border-white/5 rounded-xl h-12 px-4 text-[10px] font-black uppercase italic text-white focus:outline-none focus:border-secondary"
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2">
                                             <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">TO DATE</span>
-                                            <input 
+                                            <input
                                                 type="date" value={dates.end} onChange={(e) => setDates({ ...dates, end: e.target.value })}
-                                                className="bg-black/50 border border-white/5 rounded-xl h-12 px-4 text-[10px] font-black uppercase italic text-white focus:outline-none focus:border-secondary" 
+                                                className="bg-black/50 border border-white/5 rounded-xl h-12 px-4 text-[10px] font-black uppercase italic text-white focus:outline-none focus:border-secondary"
                                             />
                                         </div>
-                                     </div>
-                                 </motion.div>
-                             )}
-                         </AnimatePresence>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
                     {/* Right: Data Area */}
@@ -163,14 +163,14 @@ const Reports = () => {
 
                         {/* Report Log Display */}
                         <div className="glass rounded-[32px] border border-white/5 bg-white/5 shadow-2xl relative overflow-hidden">
-                             <div className="p-8 border-b border-white/5 flex items-center justify-between">
+                            <div className="p-8 border-b border-white/5 flex items-center justify-between">
                                 <h3 className="text-sm font-black italic uppercase tracking-tighter text-white">GENERATED LOG ARCHIVE</h3>
                                 <Button onClick={downloadCSV} variant="outline" size="sm" className="h-12 px-6 rounded-xl border-secondary/20 bg-secondary/5 text-secondary text-[10px] font-black italic tracking-widest">
                                     <Download size={16} className="mr-3" /> EXPORT TO CSV
                                 </Button>
-                             </div>
-                             
-                             <div className="overflow-x-auto no-scrollbar">
+                            </div>
+
+                            <div className="overflow-x-auto no-scrollbar">
                                 <table className="w-full text-left">
                                     <thead className="bg-black border-b border-white/5">
                                         <tr>
@@ -203,7 +203,7 @@ const Reports = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                             </div>
+                            </div>
                         </div>
                     </div>
                 </div>

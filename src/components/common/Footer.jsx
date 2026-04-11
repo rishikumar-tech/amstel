@@ -32,11 +32,12 @@ const YouTubeIcon = ({ size = 22 }) => (
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const policies = [
-    { label: 'Refund Policy',      href: '/policies/refund',   Icon: RefreshCw },
-    { label: 'Privacy Policy',     href: '/policies/privacy',  Icon: Lock },
-    { label: 'Terms of Service',   href: '/policies/terms',    Icon: FileText },
+    { label: 'Delivery & Returns', href: '/delivery-returns',  Icon: RefreshCw },
+    { label: 'Refund Policy',      href: '/refund-policy',     Icon: RefreshCw },
+    { label: 'Privacy Policy',     href: '/privacy-policy',    Icon: Lock },
+    { label: 'Terms of Service',   href: '/terms',             Icon: FileText },
     { label: 'Contact Info',       href: '/contact',           Icon: Mail },
-    { label: 'Shipping Policy',    href: '/policies/shipping', Icon: Truck },
+    { label: 'Shipping Policy',    href: '/shipping-policy',   Icon: Truck },
 ];
 
 const socialLinks = [
@@ -231,10 +232,10 @@ export const FullFooter = () => (
                                 <MapPin size={13} className="text-secondary/60 group-hover:text-secondary transition-colors duration-300" />
                             </div>
                             <p className="text-[10px] font-black uppercase tracking-wider text-white/30 italic leading-relaxed">
-                                Amstel Riders Helmets<br />
+                                Amstel Riders<br />
                                 Vellore – Katpadi Road,<br />
-                                Near New Bus Stand,<br />
-                                Vellore, Tamil Nadu 632004
+                                Near RoyalEnfield Showroom,<br />
+                                Viruthampet, Vellore, Tamil Nadu 632006
                             </p>
                         </div>
 

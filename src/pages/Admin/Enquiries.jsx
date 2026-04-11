@@ -7,7 +7,7 @@ import DataTable from '../../components/admin/DataTable';
 const Enquiries = () => {
     const [enquiries, setEnquiries] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
 
     const fetchEnquiries = async () => {
         try {
@@ -38,8 +38,8 @@ const Enquiries = () => {
     const handleDelete = async (row) => {
         if (!window.confirm('PERMANENTLY DELETE THIS ENQUIRY?')) return;
         try {
-             // For now, endpoint not implemented, just filter locally or alert
-             alert('ENQUIRY ARCHIVED (ENDPOINT IN DEVELOPMENT)');
+            // For now, endpoint not implemented, just filter locally or alert
+            alert('ENQUIRY ARCHIVED (ENDPOINT IN DEVELOPMENT)');
         } catch (error) {
             console.error(error);
         }
@@ -60,19 +60,19 @@ const Enquiries = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                     <div className="glass p-6 rounded-2xl border-white/5 bg-white/5 flex flex-col gap-2">
-                         <span className="text-[8px] font-black text-white/30 uppercase tracking-widest leading-none mb-1">TOTAL LEADS</span>
-                         <span className="text-2xl font-black italic text-white uppercase">{enquiries.length}</span>
-                     </div>
-                     <div className="glass p-6 rounded-2xl border-white/5 bg-white/5 flex flex-col gap-2">
-                         <span className="text-[8px] font-black text-white/30 uppercase tracking-widest leading-none mb-1">UNREAD STREAM</span>
-                         <span className="text-2xl font-black italic text-secondary uppercase">ACTIVE</span>
-                     </div>
+                    <div className="glass p-6 rounded-2xl border-white/5 bg-white/5 flex flex-col gap-2">
+                        <span className="text-[8px] font-black text-white/30 uppercase tracking-widest leading-none mb-1">TOTAL LEADS</span>
+                        <span className="text-2xl font-black italic text-white uppercase">{enquiries.length}</span>
+                    </div>
+                    <div className="glass p-6 rounded-2xl border-white/5 bg-white/5 flex flex-col gap-2">
+                        <span className="text-[8px] font-black text-white/30 uppercase tracking-widest leading-none mb-1">UNREAD STREAM</span>
+                        <span className="text-2xl font-black italic text-secondary uppercase">ACTIVE</span>
+                    </div>
                 </div>
 
-                <DataTable 
-                    columns={columns} 
-                    data={enquiries} 
+                <DataTable
+                    columns={columns}
+                    data={enquiries}
                     isLoading={isLoading}
                     onView={handleViewEnquiry}
                     onDelete={handleDelete}

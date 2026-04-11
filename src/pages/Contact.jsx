@@ -46,7 +46,7 @@ const Contact = () => {
                                 const formData = new FormData(e.target);
                                 const data = Object.fromEntries(formData.entries());
                                 try {
-                                    const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+                                    const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
                                     const res = await axios.post(`${API_URL}/admin/enquiries`, data);
                                     if (res.data.success) {
                                         alert('ENQUIRY TRANSMITTED SUCCESSFULLY!');

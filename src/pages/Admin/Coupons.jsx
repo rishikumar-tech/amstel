@@ -18,7 +18,7 @@ const Coupons = () => {
         usage_limit: ''
     });
 
-    const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
 
     const fetchCoupons = async () => {
         try {
@@ -90,8 +90,8 @@ const Coupons = () => {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {[
                         { label: 'Total Coupons', value: coupons.length, icon: Tag, color: 'text-primary', bg: 'bg-primary/10' },
-                        { label: 'Active',  value: coupons.filter(c => !isExpired(c.expiry_date)).length, icon: Clock,   color: 'text-green-400', bg: 'bg-green-500/10' },
-                        { label: 'Expired', value: coupons.filter(c => isExpired(c.expiry_date)).length,  icon: AlertTriangle, color: 'text-secondary', bg: 'bg-secondary/10' },
+                        { label: 'Active', value: coupons.filter(c => !isExpired(c.expiry_date)).length, icon: Clock, color: 'text-green-400', bg: 'bg-green-500/10' },
+                        { label: 'Expired', value: coupons.filter(c => isExpired(c.expiry_date)).length, icon: AlertTriangle, color: 'text-secondary', bg: 'bg-secondary/10' },
                     ].map(({ label, value, icon: Icon, color, bg }) => (
                         <div key={label} className="glass rounded-2xl p-5 border border-white/5 flex items-center gap-4">
                             <div className={`w-11 h-11 rounded-xl ${bg} flex items-center justify-center ${color} border border-white/5`}>
@@ -129,17 +129,15 @@ const Coupons = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.95 }}
                                         transition={{ delay: i * 0.05 }}
-                                        className={`glass rounded-2xl border p-5 flex flex-col gap-3 group transition-all ${
-                                            expired ? 'border-white/5 opacity-50' : 'border-white/10 hover:border-secondary/30'
-                                        }`}
+                                        className={`glass rounded-2xl border p-5 flex flex-col gap-3 group transition-all ${expired ? 'border-white/5 opacity-50' : 'border-white/10 hover:border-secondary/30'
+                                            }`}
                                     >
                                         {/* Top row */}
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
                                                 <span className="text-lg font-black italic tracking-widest text-secondary">{coupon.code}</span>
-                                                <span className={`ml-2 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${
-                                                    expired ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-400'
-                                                }`}>
+                                                <span className={`ml-2 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${expired ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-400'
+                                                    }`}>
                                                     {expired ? 'EXPIRED' : 'ACTIVE'}
                                                 </span>
                                             </div>

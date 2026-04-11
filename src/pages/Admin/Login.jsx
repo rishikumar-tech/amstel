@@ -56,7 +56,7 @@ const AdminLogin = () => {
                             <Mail size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-secondary transition-colors" />
                             <input 
                                 type="email" required name="email" value={credentials.email} onChange={handleChange}
-                                placeholder="ADMIN@AMSTELRIDERS.COM"
+                                placeholder="Amstel@Harish.in"
                                 className="w-full bg-white/5 border border-white/5 rounded-2xl h-16 pl-16 pr-6 text-xs font-black italic tracking-widest text-white uppercase placeholder:text-white/10 focus:outline-none focus:border-secondary transition-all"
                             />
                         </div>

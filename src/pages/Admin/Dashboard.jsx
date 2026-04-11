@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
+import {
     Users, ShoppingCart, DollarSign, Package, ArrowUpRight, Clock, RefreshCw
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -21,7 +21,7 @@ const AdminDashboard = () => {
     const [recentOrders, setRecentOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
 
     const fetchData = async () => {
         try {
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
                 {/* Stats Cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                     {cards.map((stat, i) => (
-                        <motion.div 
+                        <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -103,46 +103,52 @@ const AdminDashboard = () => {
                     {/* Revenue Chart */}
                     <div className="lg:col-span-2 flex flex-col gap-8">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
-                             <h2 className="text-xl font-black italic uppercase tracking-tighter text-white">REVENUE <span className="text-primary">ANALYTICS</span></h2>
-                             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/30 italic">
+                            <h2 className="text-xl font-black italic uppercase tracking-tighter text-white">REVENUE <span className="text-primary">ANALYTICS</span></h2>
+                            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/30 italic">
                                 <div className="w-2 h-2 rounded-full bg-primary" /> REAL-TIME TREND
-                             </div>
+                            </div>
                         </div>
-                        
-                        <div className="glass rounded-2xl lg:rounded-[32px] p-4 md:p-6 lg:p-8 h-[240px] md:h-[300px] lg:h-[400px] border border-white/5 bg-white/5 shadow-inner overflow-hidden">
-                            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-                                <AreaChart data={chartData}>
-                                    <defs>
-                                        <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#e21d1d" stopOpacity={0.3}/>
-                                            <stop offset="95%" stopColor="#e21d1d" stopOpacity={0}/>
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                                    <XAxis 
-                                        dataKey="date" 
-                                        stroke="rgba(255,255,255,0.3)" 
-                                        fontSize={9} 
-                                        tickLine={false} 
-                                        axisLine={false} 
-                                        tick={{ fill: 'rgba(255,255,255,0.3)', fontWeight: 900 }}
-                                    />
-                                    <YAxis 
-                                        stroke="rgba(255,255,255,0.3)" 
-                                        fontSize={9} 
-                                        tickLine={false} 
-                                        axisLine={false} 
-                                        tickFormatter={(value) => `₹${value/1000}K`}
-                                        tick={{ fill: 'rgba(255,255,255,0.3)', fontWeight: 900 }}
-                                    />
-                                    <Tooltip 
-                                        contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', fontSize: '9px', color: '#fff' }}
-                                        itemStyle={{ color: '#e21d1d', fontWeight: 900, textTransform: 'uppercase' }}
-                                        labelStyle={{ color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}
-                                    />
-                                    <Area type="monotone" dataKey="revenue" stroke="#e21d1d" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
-                                </AreaChart>
-                            </ResponsiveContainer>
+
+                        <div className="glass rounded-2xl lg:rounded-[32px] p-4 md:p-6 lg:p-8 h-[300px] md:h-[350px] lg:h-[450px] border border-white/5 bg-white/5 shadow-inner overflow-hidden relative">
+                            {chartData.length > 0 ? (
+                                <ResponsiveContainer width="100%" height="100%" minHeight={200}>
+                                    <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                        <defs>
+                                            <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor="#e21d1d" stopOpacity={0.3} />
+                                                <stop offset="95%" stopColor="#e21d1d" stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                                        <XAxis
+                                            dataKey="date"
+                                            stroke="rgba(255,255,255,0.3)"
+                                            fontSize={9}
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tick={{ fill: 'rgba(255,255,255,0.3)', fontWeight: 900 }}
+                                        />
+                                        <YAxis
+                                            stroke="rgba(255,255,255,0.3)"
+                                            fontSize={9}
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tickFormatter={(value) => `₹${value / 1000}K`}
+                                            tick={{ fill: 'rgba(255,255,255,0.3)', fontWeight: 900 }}
+                                        />
+                                        <Tooltip
+                                            contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', fontSize: '9px', color: '#fff' }}
+                                            itemStyle={{ color: '#e21d1d', fontWeight: 900, textTransform: 'uppercase' }}
+                                            labelStyle={{ color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}
+                                        />
+                                        <Area type="monotone" dataKey="revenue" stroke="#e21d1d" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -151,7 +157,7 @@ const AdminDashboard = () => {
                         <h2 className="text-xl font-black italic uppercase tracking-tighter text-white px-2">RECENT <span className="text-secondary">STREAM</span></h2>
                         <div className="flex flex-col gap-4">
                             {recentOrders.length > 0 ? recentOrders.map((order, i) => (
-                                <motion.div 
+                                <motion.div
                                     key={i}
                                     initial={{ opacity: 0, x: 20 }}
                                     animate={{ opacity: 1, x: 0 }}
@@ -173,7 +179,7 @@ const AdminDashboard = () => {
                             )) : (
                                 <div className="glass rounded-2xl p-10 border border-white/5 bg-white/5 flex flex-col items-center justify-center text-center">
                                     <Clock size={32} className="text-white/10 mb-4" />
-                                    <span className="text-[10px] font-black uppercase italic text-white/20 tracking-widest leading-relaxed">NO RECENT ACTIVITY DETECTED<br/>IN THE SYSTEM JOURNAL</span>
+                                    <span className="text-[10px] font-black uppercase italic text-white/20 tracking-widest leading-relaxed">NO RECENT ACTIVITY DETECTED<br />IN THE SYSTEM JOURNAL</span>
                                 </div>
                             )}
                         </div>

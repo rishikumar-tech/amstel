@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { 
+import {
     LayoutDashboard, Box, Layers, ShoppingCart, Users, Tag,
-    LogOut, Menu, X, ChevronRight, Bell, FileText, MessageCircle
+    LogOut, Menu, X, ChevronRight, Bell, FileText, MessageCircle, Navigation
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../../store/useAuthStore';
@@ -16,23 +16,24 @@ const AdminLayout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const menuItems = [
-        { name: 'Dashboard',     path: '/admin',           icon: LayoutDashboard },
-        { name: 'Brands',        path: '/admin/brands',    icon: Layers },
-        { name: 'Models & Colors',path: '/admin/models',   icon: Box },
-        { name: 'Orders',        path: '/admin/orders',    icon: ShoppingCart },
-        { name: 'Reports',       path: '/admin/reports',   icon: FileText },
-        { name: 'Coupons',       path: '/admin/coupons',   icon: Tag },
-        { name: 'Enquiries',     path: '/admin/enquiries', icon: MessageCircle },
-        { name: 'Customers',     path: '/admin/customers', icon: Users },
+        { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
+        { name: 'Brands', path: '/admin/brands', icon: Layers },
+        { name: 'Models & Colors', path: '/admin/models', icon: Box },
+        { name: 'Orders', path: '/admin/orders', icon: ShoppingCart },
+        { name: 'Reports', path: '/admin/reports', icon: FileText },
+        { name: 'Coupons', path: '/admin/coupons', icon: Tag },
+        { name: 'Enquiries', path: '/admin/enquiries', icon: MessageCircle },
+        { name: 'Customers', path: '/admin/customers', icon: Users },
+        { name: 'Bikes', path: '/admin/bikes', icon: Navigation },
     ];
 
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+                const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
                 const res = await axios.get(`${API_URL}/admin/stats`);
                 if (res.data.success) setUnreadCount(res.data.stats.totalOrders > 0 ? 3 : 0);
-            } catch {}
+            } catch { }
         };
         fetchNotifications();
         const interval = setInterval(fetchNotifications, 120000);
@@ -203,9 +204,8 @@ const AdminLayout = ({ children }) => {
                                 key={item.path}
                                 to={item.path}
                                 end={item.path === '/admin'}
-                                className={`flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all ${
-                                    isActive ? 'text-secondary' : 'text-white/30 hover:text-white'
-                                }`}
+                                className={`flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all ${isActive ? 'text-secondary' : 'text-white/30 hover:text-white'
+                                    }`}
                             >
                                 <item.icon size={20} />
                                 <span className="text-[8px] font-black uppercase tracking-widest">{item.name.split(' ')[0]}</span>

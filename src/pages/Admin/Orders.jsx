@@ -13,7 +13,7 @@ const Orders = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
-    const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
 
     const fetchOrders = async () => {
         try {
@@ -37,16 +37,20 @@ const Orders = () => {
         { key: 'id', label: 'ORDER ID', render: (row) => <span className="text-secondary font-black">#{row.id.toString().slice(-6).toUpperCase()}</span> },
         { key: 'user_name', label: 'CUSTOMER' },
         { key: 'total_amount', label: 'AMOUNT', render: (row) => <span>₹{row.total_amount.toLocaleString()}</span> },
-        { key: 'payment_status', label: 'PAYMENT', render: (row) => (
-            <Badge variant={row.payment_status === 'SUCCESS' ? 'success' : row.payment_status === 'PENDING' ? 'info' : 'danger'} size="sm">
-                {row.payment_status}
-            </Badge>
-        )},
-        { key: 'order_status', label: 'ORDER STATUS', render: (row) => (
-            <Badge variant={row.order_status === 'DELIVERED' ? 'success' : row.order_status === 'CANCELLED' ? 'danger' : 'info'} size="sm">
-                {row.order_status || 'PENDING'}
-            </Badge>
-        )},
+        {
+            key: 'payment_status', label: 'PAYMENT', render: (row) => (
+                <Badge variant={row.payment_status === 'SUCCESS' ? 'success' : row.payment_status === 'PENDING' ? 'info' : 'danger'} size="sm">
+                    {row.payment_status}
+                </Badge>
+            )
+        },
+        {
+            key: 'order_status', label: 'ORDER STATUS', render: (row) => (
+                <Badge variant={row.order_status === 'DELIVERED' ? 'success' : row.order_status === 'CANCELLED' ? 'danger' : 'info'} size="sm">
+                    {row.order_status || 'PENDING'}
+                </Badge>
+            )
+        },
     ];
 
     const handleViewOrder = (order) => {
@@ -83,11 +87,11 @@ const Orders = () => {
                     </Button>
                 </div>
 
-                <DataTable 
-                    columns={columns} 
-                    data={orders} 
+                <DataTable
+                    columns={columns}
+                    data={orders}
                     isLoading={isLoading}
-                    onView={handleViewOrder} 
+                    onView={handleViewOrder}
                 />
 
                 <Modal isOpen={isDetailsModalOpen} onClose={() => setIsDetailsModalOpen(false)} title={`ORDER DETAILS / ${selectedOrder?.id?.toString().slice(-6).toUpperCase()}`}>
@@ -185,7 +189,7 @@ const Orders = () => {
                         <div className="flex flex-col md:flex-row items-center gap-4 pt-6 border-t border-white/5">
                             <div className="flex-grow flex items-center gap-3 w-full">
                                 <span className="text-[10px] font-black uppercase text-white/30 italic whitespace-nowrap">SET STATUS:</span>
-                                <select 
+                                <select
                                     value={selectedOrder?.order_status || 'PENDING'}
                                     onChange={(e) => updateStatus(e.target.value)}
                                     className="flex-grow bg-white/5 border border-white/10 rounded-xl h-14 px-4 text-xs font-black italic tracking-widest text-white uppercase focus:outline-none focus:border-secondary transition-all appearance-none"
@@ -195,9 +199,9 @@ const Orders = () => {
                                     ))}
                                 </select>
                             </div>
-                            <Button 
-                                onClick={() => updateStatus('DELIVERED')} 
-                                disabled={selectedOrder?.order_status === 'DELIVERED'} 
+                            <Button
+                                onClick={() => updateStatus('DELIVERED')}
+                                disabled={selectedOrder?.order_status === 'DELIVERED'}
                                 className="w-full md:w-auto h-14 px-10 rounded-xl italic font-black bg-secondary hover:bg-secondary/80 text-white"
                             >
                                 <CheckCircle2 size={18} className="mr-3" /> MARK AS DELIVERED

@@ -10,16 +10,45 @@ const useCartStore = create(
                 const currentItems = get().items;
                 const existingItem = currentItems.find(item => item.id === product.id);
                 
-                if (existingItem) {
-                    set({
-                        items: currentItems.map(item =>
-                            item.id === product.id
-                                ? { ...item, quantity: (item.quantity || 1) + 1 }
-                                : item
+                // CRITICAL FIX: Robust image selection and stripping
+                const fallbackImg = 'https://images.unsplash.com/photo-1558981403-c5f91eb9c08d?q=80&w=2070&auto=format&fit=crop';
+                
+                let cartImg = product.image_url;
+                if (!cartImg && Array.isArray(product.image_urls) && product.image_urls.length > 0) {
+                    cartImg = product.image_urls[0];
+                }
+
+                const cleanItem = {
+                    id: product.id,
+                    name: product.name || `${product.brand} ${product.model_name}`,
+                    price: Number(product.price),
+                    quantity: 1,
+                    image_url: cartImg || fallbackImg
+                };
+
+                // Filter out broken base64 or empty strings
+                if (typeof cleanItem.image_url !== 'string' || cleanItem.image_url.startsWith('data:') || !cleanItem.image_url.trim()) {
+                    cleanItem.image_url = fallbackImg;
+                }
+
+                try {
+                    if (existingItem) {
+                        set({
+                            items: currentItems.map(item =>
+                                item.id === product.id
+                                    ? { ...item, quantity: (item.quantity || 1) + 1 }
+                                    : item
                         )
-                    });
-                } else {
-                    set({ items: [...currentItems, { ...product, quantity: 1 }] });
+                        });
+                    } else {
+                        set({ items: [...currentItems, cleanItem] });
+                    }
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError') {
+                        console.error('Cart full, clearing and retrying...');
+                        localStorage.removeItem('amstel-riders-cart');
+                        set({ items: [cleanItem] });
+                    }
                 }
             },
             

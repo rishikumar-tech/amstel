@@ -12,6 +12,13 @@ const Checkout = lazy(() => import('./pages/Checkout'));
 const Success = lazy(() => import('./pages/Success'));
 const Contact = lazy(() => import('./pages/Contact'));
 
+// Policy pages
+const DeliveryReturns = lazy(() => import('./pages/Policies/DeliveryReturns'));
+const RefundPolicy = lazy(() => import('./pages/Policies/RefundPolicy'));
+const PrivacyPolicy = lazy(() => import('./pages/Policies/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/Policies/TermsOfService'));
+const ShippingPolicy = lazy(() => import('./pages/Policies/ShippingPolicy'));
+
 // Lazy load Admin pages
 const AdminLogin = lazy(() => import('./pages/Admin/Login'));
 const AdminDashboard = lazy(() => import('./pages/Admin/Dashboard'));
@@ -21,6 +28,7 @@ const AdminOrders = lazy(() => import('./pages/Admin/Orders'));
 const AdminReports = lazy(() => import('./pages/Admin/Reports'));
 const AdminCoupons = lazy(() => import('./pages/Admin/Coupons'));
 const AdminEnquiries = lazy(() => import('./pages/Admin/Enquiries'));
+const AdminBikes = lazy(() => import('./pages/Admin/Bikes'));
 
 const Loader = () => (
     <div className="h-screen w-full bg-black flex items-center justify-center">
@@ -64,11 +72,19 @@ function App() {
                     {/* Client Routes */}
                     <Route path="/" element={<Home />} />
                     <Route path="/shop" element={<Shop />} />
+                    <Route path="/bikes/:bikeSlug" element={<Shop />} />
                     <Route path="/product/:slug" element={<ProductDetail />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/checkout" element={<Checkout />} />
                     <Route path="/success" element={<Success />} />
                     <Route path="/contact" element={<Contact />} />
+                    
+                    {/* Policy Routes */}
+                    <Route path="/delivery-returns" element={<DeliveryReturns />} />
+                    <Route path="/refund-policy" element={<RefundPolicy />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/terms" element={<TermsOfService />} />
+                    <Route path="/shipping-policy" element={<ShippingPolicy />} />
 
                     {/* Admin Routes */}
                     <Route path="/admin/login" element={<AdminLogin />} />
@@ -107,6 +123,11 @@ function App() {
                     <Route path="/admin/enquiries" element={
                         <ProtectedAdminRoute>
                             <AdminEnquiries />
+                        </ProtectedAdminRoute>
+                    } />
+                    <Route path="/admin/bikes" element={
+                        <ProtectedAdminRoute>
+                            <AdminBikes />
                         </ProtectedAdminRoute>
                     } />
 

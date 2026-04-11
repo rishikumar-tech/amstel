@@ -6,6 +6,7 @@ import Navbar from '../components/common/Navbar';
 import BottomNav from '../components/common/BottomNav';
 import ProductGrid from '../components/product/ProductGrid';
 import Button from '../components/ui/Button';
+import axios from 'axios';
 
 /* ─── Fade-up wrapper ─── */
 const FadeUp = ({ children, delay = 0, className = '' }) => {
@@ -50,12 +51,54 @@ const ShimmerButton = ({ children, onClick, variant = 'primary', className = '' 
   };
   return (
     <button onClick={onClick} className={`${base} ${variants[variant]} ${className}`}>
-      {/* shimmer sweep */}
       <span className="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       {children}
     </button>
   );
 };
+
+/* ─── Reusable Image Brand Card ─── */
+const BrandCard = ({ name, tagline, image, color, index }) => (
+  <motion.div
+    initial={{ opacity: 0, x: 40 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    viewport={{ once: true }}
+    transition={{ delay: index * 0.08 }}
+    whileHover={{ scale: 1.04 }}
+    className="snap-center flex-shrink-0 cursor-pointer group"
+  >
+    <div className="relative w-36 md:w-44 h-20 md:h-24 rounded-2xl overflow-hidden border border-white/8
+                    hover:border-secondary/40 transition-all duration-300 shadow-lg hover:shadow-secondary/10 hover:shadow-xl">
+      {/* Background image */}
+      <img
+        src={image}
+        alt={name}
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-110
+                   group-hover:brightness-110 transition-all duration-500 ease-out"
+      />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20
+                      group-hover:from-black/70 group-hover:via-black/25 transition-all duration-400" />
+      {/* Colored accent line at top */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ background: color || '#e63946' }}
+      />
+      {/* Text */}
+      <div className="absolute bottom-0 left-0 right-0 p-2.5">
+        <span className="block text-xs md:text-sm font-black italic text-white tracking-tight leading-none mb-0.5">
+          {name}
+        </span>
+        {tagline && (
+          <span className="block text-[8px] font-bold uppercase tracking-widest text-white/45 group-hover:text-white/65 transition-colors">
+            {tagline}
+          </span>
+        )}
+      </div>
+    </div>
+  </motion.div>
+);
 
 const Home = () => {
   const navigate = useNavigate();
@@ -64,27 +107,150 @@ const Home = () => {
   const bgY = useTransform(scrollY, [0, 600], ['0%', '18%']);
   const bgScale = useTransform(scrollY, [0, 600], [1.08, 1.18]);
 
-  const featuredProducts = [
-    { id: 1, name: 'LS2 Thunder Helmet', slug: 'ls2-thunder-helmet', price: 3999, compare_price: 4999, image_url: 'https://images.unsplash.com/photo-1621259182978-fbf93132d53d?q=80&w=1000&auto=format&fit=crop', brand: 'LS2', rating: '4.9', stock: 10 },
-    { id: 2, name: 'SMK Stellar Helmet', slug: 'smk-stellar-helmet', price: 3999, compare_price: 4500, image_url: 'https://images.unsplash.com/photo-1542362567-b055002db2ed?q=80&w=1000&auto=format&fit=crop', brand: 'SMK', rating: '4.8', stock: 5 },
-    { id: 3, name: 'Vega Crux Helmet', slug: 'vega-crux-helmet', price: 1800, compare_price: 2200, image_url: 'https://images.unsplash.com/photo-1599313289053-1574cc8295ee?q=80&w=1000&auto=format&fit=crop', brand: 'Vega', rating: '4.7', stock: 0 },
-    { id: 4, name: 'MT Revenge 2', slug: 'mt-revenge-2', price: 7500, compare_price: 8500, image_url: 'https://images.unsplash.com/photo-1613933549102-882b54488497?q=80&w=1000&auto=format&fit=crop', brand: 'MT', rating: '4.9', stock: 20 },
-  ];
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const categories = [
-    { name: 'Helmets', icon: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=200&auto=format&fit=crop', path: '/shop?category=helmets' },
-    { name: 'Jackets', icon: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=200&auto=format&fit=crop', path: '/shop?category=jackets' },
-    { name: 'Gloves', icon: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=200&auto=format&fit=crop', path: '/shop?category=gloves' },
-    { name: 'Boots', icon: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop', path: '/shop?category=boots' },
-  ];
+  const [categories, setCategories] = useState([
+    { name: 'Helmets', icon: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=200&auto=format&fit=crop', path: '/shop?category=Helmets' },
+    { name: 'Jackets', icon: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=200&auto=format&fit=crop', path: '/shop?category=Jackets' },
+    { name: 'Gloves', icon: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=200&auto=format&fit=crop', path: '/shop?category=Gloves' },
+    { name: 'Boots', icon: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop', path: '/shop?category=Boots' },
+  ]);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
+        const res = await axios.get(`${API_URL}/products`);
+        if (res.data.success) {
+          const allProducts = res.data.products;
+
+          const categoryGroups = allProducts.reduce((acc, p) => {
+            if (!acc[p.category]) acc[p.category] = [];
+            acc[p.category].push(p);
+            return acc;
+          }, {});
+
+          const iconMapping = {
+            'helmets': 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=200&auto=format&fit=crop',
+            'jackets': 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=200&auto=format&fit=crop',
+            'gloves': 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=200&auto=format&fit=crop',
+            'boots': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop'
+          };
+
+          const dynamicCats = Object.keys(categoryGroups).map(catName => ({
+            name: catName,
+            icon: iconMapping[catName.toLowerCase()] || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=200&auto=format&fit=crop',
+            path: `/shop?category=${encodeURIComponent(catName)}`
+          })).slice(0, 6);
+
+          if (dynamicCats.length > 0) setCategories(dynamicCats);
+
+          let selected = [];
+          Object.values(categoryGroups).forEach(group => {
+            const shuffledGroup = [...group].sort(() => 0.5 - Math.random());
+            selected.push(...shuffledGroup.slice(0, 2));
+          });
+
+          const finalProducts = selected
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 15);
+
+          setFeaturedProducts(finalProducts);
+        }
+      } catch (error) {
+        console.error("Failed to load products", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  /* ─── Gear Brands with images ─── */
   const brands = [
-    { name: 'LS2', tagline: 'Racing Heritage', color: '#e63946' },
-    { name: 'SMK', tagline: 'Precision Crafted', color: '#f4a261' },
-    { name: 'MT', tagline: 'Born to Race', color: '#2ec4b6' },
-    { name: 'Vega', tagline: 'Value & Safety', color: '#a8dadc' },
-    { name: 'Steelbird', tagline: 'Indian Icon', color: '#f1faee' },
-    { name: 'Royal Enfield', tagline: 'Classic Riders', color: '#e9c46a' },
+    {
+      name: 'LS2',
+      tagline: 'Racing Heritage',
+      color: '#e63946',
+      image: '/LS2.jpeg',
+    },
+    {
+      name: 'SMK',
+      tagline: 'Precision Crafted',
+      color: '#f4a261',
+      image: '/SMK.jpeg',
+    },
+    {
+      name: 'MT',
+      tagline: 'Born to Race',
+      color: '#2ec4b6',
+      image: '/MT.jpeg',
+    },
+    {
+      name: 'Vega',
+      tagline: 'Value & Safety',
+      color: '#a8dadc',
+      image: '/VEGA.jpeg',
+    },
+    {
+      name: 'Steelbird',
+      tagline: 'Indian Icon',
+      color: '#f1faee',
+      image: '/SB.jpeg',
+    },
+    {
+      name: 'Royal Enfield',
+      tagline: 'Classic Riders',
+      color: '#e9c46a',
+      image: '/RE.jpeg',
+    },
+    {
+      name: 'Ryder',
+      tagline: 'Ride in Style',
+      color: '#e9c46a',
+      image: '/RYDER.jpeg',
+    },
+    {
+      name: 'Ridex',
+      tagline: 'Riders Choice',
+      color: '#e9c46a',
+      image: '/RIDEX.jpeg',
+    },
+    {
+      name: 'Studds',
+      tagline: 'Riders Gear',
+      color: '#e9c46a',
+      image: '/STUDDS.jpeg',
+    },
+  ];
+
+  /* ─── Bike Brands ─── */
+  const bikeBrands = [
+    {
+      name: 'Royal Enfield',
+      image: '/GT650.jpeg',
+    },
+    {
+      name: 'KTM',
+      image: '/390.jpeg',
+    },
+    {
+      name: 'Yamaha',
+      image: '/R15.jpeg',
+    },
+    {
+      name: 'Kawasaki',
+      image: '/z900.jpeg',
+    },
+    {
+      name: 'BMW',
+      image: '/S1000rr.jpeg',
+    },
+    {
+      name: 'Bajaj',
+      image: "/NS200.jpeg",
+    },
   ];
 
   return (
@@ -94,7 +260,6 @@ const Home = () => {
       {/* ═══════════════ HERO ═══════════════ */}
       <section ref={heroRef} className="relative h-[95vh] md:h-screen w-full flex items-center overflow-hidden">
 
-        {/* Parallax background */}
         <motion.div className="absolute inset-0 z-0" style={{ y: bgY, scale: bgScale }}>
           <img
             src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=2000&auto=format&fit=crop"
@@ -104,10 +269,8 @@ const Home = () => {
           />
         </motion.div>
 
-        {/* Rich overlay */}
         <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/55 to-black/20" />
         <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/90 via-black/30 to-transparent" />
-        {/* Red accent glow */}
         <div className="absolute bottom-0 left-0 w-[60%] h-[40%] z-[1] bg-secondary/10 blur-[120px] rounded-full" />
 
         <div className="container mx-auto px-6 md:px-12 relative z-10 pt-20">
@@ -117,7 +280,6 @@ const Home = () => {
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-4xl"
           >
-            {/* Rating pill */}
             <motion.div
               initial={{ opacity: 0, y: -16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -132,7 +294,6 @@ const Home = () => {
               </div>
             </motion.div>
 
-            {/* Headline */}
             <h1 className="text-[clamp(3.5rem,12vw,9rem)] font-black italic tracking-tighter leading-[0.85] mb-8 select-none">
               <motion.span
                 initial={{ opacity: 0, y: 40 }}
@@ -165,7 +326,6 @@ const Home = () => {
               Premium protective gear for the modern Indian rider. Speed. Safety. No compromises.
             </motion.p>
 
-            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -188,7 +348,6 @@ const Home = () => {
               </ShimmerButton>
             </motion.div>
 
-            {/* Floating stat badges */}
             <div className="flex gap-3 flex-wrap">
               <StatBadge value="100K+" label="Riders Served" delay={0.9} />
               <StatBadge value="4.9★" label="Avg Rating" delay={1.0} />
@@ -196,7 +355,6 @@ const Home = () => {
           </motion.div>
         </div>
 
-        {/* Desktop category bar */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-full max-w-5xl px-6 hidden md:block">
           <motion.div
             initial={{ y: 50, opacity: 0 }}
@@ -225,7 +383,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ═══════════════ FEATURED BRANDS ═══════════════ */}
+      {/* ═══════════════ FEATURED GEAR BRANDS ═══════════════ */}
       <section className="py-12 md:py-16 bg-gradient-to-b from-black via-dark-accent/60 to-black border-y border-white/5 overflow-hidden">
         <FadeUp className="container mx-auto px-6 mb-8 flex items-center justify-between">
           <div>
@@ -239,46 +397,74 @@ const Home = () => {
           </NavLink>
         </FadeUp>
 
-        {/* Horizontal scroll strip */}
+        {/* Horizontal scroll strip — now image-based cards */}
         <div className="flex gap-5 px-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2">
           {brands.map((brand, i) => (
+            <BrandCard
+              key={i}
+              index={i}
+              name={brand.name}
+              tagline={brand.tagline}
+              image={brand.image}
+              color={brand.color}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════════════ BIKE BRANDS ═══════════════ */}
+      <section className="py-12 md:py-16 bg-gradient-to-b from-black to-dark-accent/30 overflow-hidden">
+        <FadeUp className="container mx-auto px-6 mb-8 flex items-center justify-between">
+          <div>
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-secondary mb-1">Shop By Bike</p>
+            <h2 className="text-2xl md:text-3xl font-black italic tracking-tighter text-white uppercase">
+              🏍️ BIKE BRANDS
+            </h2>
+          </div>
+          <NavLink to="/shop" className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-secondary transition-colors flex items-center gap-1">
+            VIEW ALL <ChevronRight size={14} />
+          </NavLink>
+        </FadeUp>
+
+        {/* Horizontal scroll — wider cards for bike brands */}
+        <div className="flex gap-5 px-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2">
+          {bikeBrands.map((bike, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              whileHover={{ scale: 1.06 }}
+              transition={{ delay: i * 0.09 }}
+              whileHover={{ scale: 1.04 }}
               className="snap-center flex-shrink-0 cursor-pointer group"
             >
-              <div className="w-36 md:w-44 h-20 md:h-24 rounded-2xl bg-white/5 border border-white/8
-                             backdrop-blur-md flex flex-col items-center justify-center gap-1
-                             hover:border-secondary/40 hover:bg-white/10 transition-all duration-300
-                             shadow-lg hover:shadow-secondary/10 hover:shadow-xl"
-              >
-                {/* Brand letter logo placeholder */}
-                <span
-                  className="text-2xl md:text-3xl font-black italic transition-all duration-300"
-                  style={{
-                    color: 'rgba(255,255,255,0.15)',
-                    filter: 'grayscale(1)',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.color = brand.color;
-                    e.currentTarget.style.filter = 'none';
-                    e.currentTarget.style.textShadow = `0 0 30px ${brand.color}66`;
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.color = 'rgba(255,255,255,0.15)';
-                    e.currentTarget.style.filter = 'grayscale(1)';
-                    e.currentTarget.style.textShadow = 'none';
-                  }}
-                >
-                  {brand.name}
-                </span>
-                <span className="text-[8px] font-bold uppercase tracking-widest text-white/25 group-hover:text-white/50 transition-colors">
-                  {brand.tagline}
-                </span>
+              <div className="relative w-48 md:w-60 h-28 md:h-36 rounded-2xl overflow-hidden border border-white/8
+                              hover:border-secondary/40 transition-all duration-300 shadow-lg hover:shadow-secondary/15 hover:shadow-xl">
+                {/* Background image */}
+                <img
+                  src={bike.image}
+                  alt={bike.name}
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-110
+                             group-hover:brightness-110 transition-all duration-500 ease-out"
+                />
+                {/* Gradient overlay — lighter on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10
+                                group-hover:from-black/75 group-hover:via-black/20 transition-all duration-400" />
+                {/* Red shimmer on hover */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-secondary/0 via-secondary/0 to-secondary/0
+                                group-hover:from-secondary/5 group-hover:via-transparent group-hover:to-transparent transition-all duration-500" />
+                {/* Top accent bar */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-secondary scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
+                {/* Bike name */}
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <span className="block text-sm md:text-base font-black italic text-white tracking-tighter leading-none">
+                    {bike.name}
+                  </span>
+                  <span className="block text-[8px] font-bold uppercase tracking-[0.2em] text-white/40 mt-0.5 group-hover:text-secondary/70 transition-colors">
+                    Shop Gear →
+                  </span>
+                </div>
               </div>
             </motion.div>
           ))}
@@ -287,7 +473,6 @@ const Home = () => {
 
       {/* ═══════════════ FEATURES BAR ═══════════════ */}
       <section className="relative py-20 md:py-28 border-y border-white/5 overflow-hidden">
-        {/* Animated gradient background */}
         <div className="absolute inset-0 bg-gradient-to-r from-dark-accent to-black" />
         <motion.div
           animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
@@ -302,7 +487,7 @@ const Home = () => {
         <div className="container mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-20">
           {[
             { icon: ShieldCheck, color: 'text-secondary', border: 'group-hover:border-secondary/50 group-hover:shadow-secondary/20', label: 'PRO PROTECTION', sub: 'ECE & DOT GLOBAL CERTIFIED' },
-            { icon: Truck, color: 'text-orange-400', border: 'group-hover:border-orange-400/50 group-hover:shadow-orange-400/20', label: 'EXPRESS SHIPPING', sub: 'PAN INDIA REACH IN 72 HOURS' },
+            { icon: Truck, color: 'text-orange-400', border: 'group-hover:border-orange-400/50 group-hover:shadow-orange-400/20', label: 'EXPRESS SHIPPING', sub: 'PAN INDIA REACH IN 5-7 DAYS' },
             { icon: Clock, color: 'text-white', border: 'group-hover:border-white/40 group-hover:shadow-white/10', label: 'RIDER SUPPORT', sub: 'TECHNICAL SIZING EXPERTS 24/7' },
           ].map(({ icon: Icon, color, border, label, sub }, i) => (
             <FadeUp key={i} delay={i * 0.12}>
@@ -335,7 +520,6 @@ const Home = () => {
           />
           <div className="absolute inset-0 bg-black/70" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
-          {/* Red glow top */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-1 bg-secondary/80 blur-md" />
         </div>
 
@@ -379,7 +563,7 @@ const Home = () => {
           </NavLink>
         </FadeUp>
 
-        <ProductGrid products={featuredProducts} isLoading={false} />
+        <ProductGrid products={featuredProducts} isLoading={isLoading} />
       </section>
 
       {/* ═══════════════ MOBILE CATEGORIES ═══════════════ */}
