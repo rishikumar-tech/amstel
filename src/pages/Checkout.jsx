@@ -21,6 +21,7 @@ const Checkout = () => {
         user_name: '',
         email: '',
         phone: '',
+        size: '',
         address: '',
         pincode: ''
     });
@@ -248,6 +249,18 @@ const Checkout = () => {
                                         placeholder="EX: 98765 43210"
                                         className="bg-black/50 border border-white/10 rounded-xl h-14 p-4 text-sm font-black text-white italic tracking-widest focus:outline-none focus:border-secondary transition-all"
                                     />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 italic ml-1">SIZE <span className="text-white/20">(OPTIONAL)</span></label>
+                                    <select
+                                        name="size" value={formData.size} onChange={handleChange}
+                                        className="bg-black/50 border border-white/10 rounded-xl h-14 px-4 text-sm font-black text-white italic tracking-widest focus:outline-none focus:border-secondary transition-all appearance-none"
+                                    >
+                                        <option value="" className="bg-black">SELECT SIZE</option>
+                                        {['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'Other'].map(s => (
+                                            <option key={s} value={s} className="bg-black">{s}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <div className="flex justify-between items-center">

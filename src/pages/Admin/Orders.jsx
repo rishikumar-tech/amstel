@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Eye, Package, Clock, Phone, MapPin, CreditCard, ChevronRight, CheckCircle2, Truck, CheckCircle } from 'lucide-react';
+import { ShoppingCart, Eye, Package, Clock, Phone, MapPin, CreditCard, ChevronRight, CheckCircle2, Truck, CheckCircle, Ruler } from 'lucide-react';
 import axios from 'axios';
 import AdminLayout from '../../components/admin/AdminLayout';
 import DataTable from '../../components/admin/DataTable';
@@ -130,6 +130,15 @@ const Orders = () => {
                                             </span>
                                         </div>
                                     </div>
+                                    {selectedOrder?.size && (
+                                        <div className="flex items-start gap-4">
+                                            <Ruler size={18} className="text-white/20 mt-1" />
+                                            <div className="flex flex-col">
+                                                <span className="text-[9px] font-black text-white/30 uppercase italic">SIZE</span>
+                                                <span className="text-sm font-black italic text-white uppercase tracking-tighter mt-1">{selectedOrder.size}</span>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -169,6 +178,7 @@ const Orders = () => {
                                         <tr>
                                             <th className="px-8 py-4 italic">PRODUCT</th>
                                             <th className="px-8 py-4 italic">QTY</th>
+                                            <th className="px-8 py-4 italic">SIZE</th>
                                             <th className="px-8 py-4 italic text-right">PRICE</th>
                                         </tr>
                                     </thead>
@@ -177,6 +187,7 @@ const Orders = () => {
                                             <tr key={i} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                                 <td className="px-8 py-6">{item.name}</td>
                                                 <td className="px-8 py-6">{item.quantity}</td>
+                                                <td className="px-8 py-6">{item.size || '-'}</td>
                                                 <td className="px-8 py-6 text-right">₹{item.price.toLocaleString()}</td>
                                             </tr>
                                         ))}
