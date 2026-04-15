@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Phone, ShoppingBag, Star, Share2, Heart, Shield, Truck, RotateCcw } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import Navbar from '../components/common/Navbar';
 import BottomNav from '../components/common/BottomNav';
@@ -162,6 +163,10 @@ const ProductDetail = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-black pb-28 md:pb-0">
+            <Helmet>
+                <title>{`${product.brand} ${product.name} | Amstel Riders`}</title>
+                <meta name="description" content={product.description?.substring(0, 160) || `Buy ${product.brand} ${product.name} at Amstel Riders. Premium motorcycle gear with fast delivery.`} />
+            </Helmet>
             <Navbar />
             <main className="container mx-auto px-4 md:px-12 pt-24 md:pt-32 lg:pt-40 max-w-7xl">
                 {/* Breadcrumbs */}
@@ -300,7 +305,7 @@ const ProductDetail = () => {
                                 </Button>
                             </div>
                             <Button variant="outline" size="lg" className="h-16 rounded-2xl flex gap-3 text-sm border-white/10 hover:border-secondary group font-black italic"
-                                onClick={() => window.open('tel:07860844044')}>
+                                onClick={() => window.open('tel:07868844044')}>
                                 <Phone size={20} className="group-hover:text-secondary group-hover:animate-shake" /> CALL FOR ENQUIRY
                             </Button>
                         </div>

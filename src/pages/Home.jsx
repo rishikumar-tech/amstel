@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Star, ArrowRight, ShieldCheck, Truck, Clock, Zap, ChevronRight } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/common/Navbar';
 import BottomNav from '../components/common/BottomNav';
 import ProductGrid from '../components/product/ProductGrid';
-import Button from '../components/ui/Button';
+import Testimonials from '../components/common/Testimonials';
 import axios from 'axios';
 
 /* ─── Fade-up wrapper ─── */
@@ -100,6 +101,12 @@ const BrandCard = ({ name, tagline, image, color, index }) => (
   </motion.div>
 );
 
+const homeCache = {
+  data: null,
+  timestamp: 0,
+};
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 const Home = () => {
   const navigate = useNavigate();
   const heroRef = useRef(null);
@@ -119,6 +126,14 @@ const Home = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      // Check cache first
+      if (homeCache.data && Date.now() - homeCache.timestamp < CACHE_DURATION) {
+        setCategories(homeCache.data.categories);
+        setFeaturedProducts(homeCache.data.featuredProducts);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
         const res = await axios.get(`${API_URL}/products`);
@@ -144,7 +159,8 @@ const Home = () => {
             path: `/shop?category=${encodeURIComponent(catName)}`
           })).slice(0, 6);
 
-          if (dynamicCats.length > 0) setCategories(dynamicCats);
+          let finalCats = dynamicCats.length > 0 ? dynamicCats : categories;
+          setCategories(finalCats);
 
           let selected = [];
           Object.values(categoryGroups).forEach(group => {
@@ -157,6 +173,10 @@ const Home = () => {
             .slice(0, 15);
 
           setFeaturedProducts(finalProducts);
+
+          // Update cache
+          homeCache.data = { categories: finalCats, featuredProducts: finalProducts };
+          homeCache.timestamp = Date.now();
         }
       } catch (error) {
         console.error("Failed to load products", error);
@@ -255,6 +275,10 @@ const Home = () => {
 
   return (
     <div className="flex flex-col min-h-screen pb-20 md:pb-0 bg-black overflow-x-hidden">
+      <Helmet>
+        <title>Home | Amstel Riders - Premium Motorcycle Gear</title>
+        <meta name="description" content="Discover premium motorcycle gear at Amstel Riders. Shop the best helmets, jackets, and accessories for your next ride." />
+      </Helmet>
       <Navbar />
 
       {/* ═══════════════ HERO ═══════════════ */}
@@ -262,7 +286,7 @@ const Home = () => {
 
         <motion.div className="absolute inset-0 z-0" style={{ y: bgY, scale: bgScale }}>
           <img
-            src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=2000&auto=format&fit=crop"
+            src="/BG1.png"
             alt="Hero"
             loading="eager"
             className="w-full h-full object-cover"
@@ -513,7 +537,7 @@ const Home = () => {
       <section className="relative h-[55vh] md:h-[65vh] w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=2000&auto=format&fit=crop"
+            src="/BG2.png"
             alt="Promo"
             loading="lazy"
             className="w-full h-full object-cover scale-105"
@@ -540,6 +564,9 @@ const Home = () => {
           </ShimmerButton>
         </FadeUp>
       </section>
+
+      {/* ═══════════════ TESTIMONIALS ═══════════════ */}
+      <Testimonials />
 
       {/* ═══════════════ FEATURED PRODUCTS ═══════════════ */}
       <section className="py-24 md:py-32 container mx-auto px-6 md:px-12">

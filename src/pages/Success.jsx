@@ -6,6 +6,7 @@ import Navbar from '../components/common/Navbar';
 import BottomNav from '../components/common/BottomNav';
 import Button from '../components/ui/Button';
 import useCartStore from '../store/useCartStore';
+import ReviewForm from '../components/common/ReviewForm';
 
 const Success = () => {
     const clearCart = useCartStore(state => state.clearCart);
@@ -41,7 +42,7 @@ const Success = () => {
                     <div className="glass p-6 rounded-2xl border-white/5 flex flex-col items-center gap-3">
                         <Truck size={24} className="text-secondary" />
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">FAST DELIVERY</h4>
-                        <p className="text-xs font-bold text-white uppercase italic">3-5 WORKING DAYS</p>
+                        <p className="text-xs font-bold text-white uppercase italic">3-7 WORKING DAYS</p>
                     </div>
                     <div className="glass p-6 rounded-2xl border-white/5 flex flex-col items-center gap-3">
                         <Mail size={24} className="text-primary" />
@@ -53,6 +54,10 @@ const Success = () => {
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">TRACKING LINK</h4>
                         <p className="text-xs font-bold text-white uppercase italic">TO YOUR PHONE</p>
                     </div>
+                </div>
+
+                <div className="mb-16 w-full flex justify-center px-4">
+                    <ReviewForm />
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">

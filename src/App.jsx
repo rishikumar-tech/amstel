@@ -1,8 +1,6 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import useAuthStore from './store/useAuthStore';
-import Footer from './components/common/Footer';
-
 // Lazy load Client pages
 const Home = lazy(() => import('./pages/Home'));
 const Shop = lazy(() => import('./pages/Shop'));
@@ -11,6 +9,7 @@ const Cart = lazy(() => import('./pages/Cart'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Success = lazy(() => import('./pages/Success'));
 const Contact = lazy(() => import('./pages/Contact'));
+const Footer = lazy(() => import('./components/common/Footer'));
 
 // Policy pages
 const DeliveryReturns = lazy(() => import('./pages/Policies/DeliveryReturns'));
@@ -29,6 +28,7 @@ const AdminReports = lazy(() => import('./pages/Admin/Reports'));
 const AdminCoupons = lazy(() => import('./pages/Admin/Coupons'));
 const AdminEnquiries = lazy(() => import('./pages/Admin/Enquiries'));
 const AdminBikes = lazy(() => import('./pages/Admin/Bikes'));
+const AdminReviews = lazy(() => import('./pages/Admin/Reviews'));
 
 const Loader = () => (
     <div className="h-screen w-full bg-black flex items-center justify-center">
@@ -128,6 +128,11 @@ function App() {
                     <Route path="/admin/bikes" element={
                         <ProtectedAdminRoute>
                             <AdminBikes />
+                        </ProtectedAdminRoute>
+                    } />
+                    <Route path="/admin/reviews" element={
+                        <ProtectedAdminRoute>
+                            <AdminReviews />
                         </ProtectedAdminRoute>
                     } />
 

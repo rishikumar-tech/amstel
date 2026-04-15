@@ -17,7 +17,7 @@ const ShippingPolicy = () => {
                 </p>
                 <ul className="list-disc ml-6 mt-4 space-y-4 text-white/60">
                     <li className="text-sm font-black italic tracking-widest uppercase">
-                        MAJOR CITIES: 3-5 BUSINESS DAYS.
+                        MAJOR CITIES: 3-7 BUSINESS DAYS.
                     </li>
                     <li className="text-sm font-black italic tracking-widest uppercase">
                         REMOTE AREAS: 7-10 BUSINESS DAYS.

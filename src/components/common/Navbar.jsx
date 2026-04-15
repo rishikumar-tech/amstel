@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Search, User, Menu, X, Phone, Mail, MessageCircle } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, Phone, Mail, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useCartStore from '../../store/useCartStore';
 
@@ -94,14 +94,14 @@ const Navbar = () => {
 
                         {/* Text Container */}
                         <div className="flex flex-col justify-center">
-                           <div className="flex items-end gap-2">
-                            <h1 className="text-xl md:text-3xl lg:text-4xl font-black italic tracking-tighter text-white leading-none">
-                                AMSTEL
-                            </h1>
+                            <div className="flex items-end gap-2">
+                                <h1 className="text-xl md:text-3xl lg:text-4xl font-black italic tracking-tighter text-white leading-none">
+                                    AMSTEL
+                                </h1>
 
-                            <h4 className="text-sm md:text-lg lg:text-xl font-bold tracking-[0.25em] text-yellow-400 leading-none">
-                                RIDERS
-                            </h4>
+                                <h4 className="text-sm md:text-lg lg:text-xl font-bold tracking-[0.25em] text-yellow-400 leading-none">
+                                    RIDERS
+                                </h4>
                             </div>
                             <span className="text-[8px] md:text-[10px] lg:text-[12px] font-bold tracking-[0.25em] text-red-500 text-primary uppercase mt-1">
                                 HELMETS | RIDING GEAR | BIKE ACCESSORIES
@@ -221,9 +221,9 @@ const Navbar = () => {
                                 <div className="mt-auto pt-10 border-t border-white/5">
                                     <p className="text-[10px] font-black tracking-[0.4em] text-white/20 uppercase mb-6 italic">CONNECT WITH THE SYSTEM</p>
                                     <div className="flex gap-6">
-                                        <a href="tel:07860844044" className="text-white/40 hover:text-white transition-colors"><Phone size={20} /></a>
+                                        <a href="tel:07868844044" className="text-white/40 hover:text-white transition-colors"><Phone size={20} /></a>
                                         <a href="mailto:amstelriders@gmail.com" className="text-white/40 hover:text-white transition-colors"><Mail size={20} /></a>
-                                        <a href="https://wa.me/917860844044" className="text-white/40 hover:text-white transition-colors"><MessageCircle size={20} /></a>
+                                        <a href="https://wa.me/917868844044" className="text-white/40 hover:text-white transition-colors"><MessageCircle size={20} /></a>
                                     </div>
                                 </div>
                             </motion.div>

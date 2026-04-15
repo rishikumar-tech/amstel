@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
-    LayoutDashboard, Box, Layers, ShoppingCart, Users, Tag,
+    LayoutDashboard, Box, Layers, ShoppingCart, Users, Tag, Star,
     LogOut, Menu, X, ChevronRight, Bell, FileText, MessageCircle, Navigation
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,6 +23,7 @@ const AdminLayout = ({ children }) => {
         { name: 'Reports', path: '/admin/reports', icon: FileText },
         { name: 'Coupons', path: '/admin/coupons', icon: Tag },
         { name: 'Enquiries', path: '/admin/enquiries', icon: MessageCircle },
+        { name: 'Reviews', path: '/admin/reviews', icon: Star },
         { name: 'Customers', path: '/admin/customers', icon: Users },
         { name: 'Bikes', path: '/admin/bikes', icon: Navigation },
     ];
