@@ -25,6 +25,9 @@ const ProductCard = ({ product }) => {
                     alt={product.name} 
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                     loading="lazy"
+                    onError={(e) => {
+                        e.target.src = 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=800&auto=format&fit=crop';
+                    }}
                 />
                 
                 {/* Overlay with Actions */}
