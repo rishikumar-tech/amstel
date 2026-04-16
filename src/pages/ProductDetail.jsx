@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Phone, ShoppingBag, Star, Share2, Heart, Shield, Truck, RotateCcw } from 'lucide-react';
@@ -12,9 +12,6 @@ import useCartStore from '../store/useCartStore';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
 
-// ✅ Module-level cache — persists across navigations, cleared on page refresh
-const productCache = new Map();
-
 const ProductDetail = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
@@ -26,9 +23,6 @@ const ProductDetail = () => {
     const [selectedVariant, setSelectedVariant] = useState(null);
     const [error, setError] = useState(null);
 
-    // ✅ Track abort controller to cancel stale requests
-    const abortRef = useRef(null);
-
     const fetchProduct = useCallback(async (targetSlug) => {
         if (!targetSlug || targetSlug === 'null' || targetSlug === 'undefined') {
             setError('Invalid Product ID');
@@ -36,76 +30,38 @@ const ProductDetail = () => {
             return;
         }
 
-        // ✅ Resolve slug: cache may be keyed by a parent product slug or variant slug
-        // Check cache first — avoid network hit entirely
-        if (productCache.has(targetSlug)) {
-            const cached = productCache.get(targetSlug);
-            setProduct(cached);
-            const matchedVariant = cached.product_variants?.find(v => v.slug === targetSlug);
-            setSelectedVariant(matchedVariant || cached.product_variants?.[0] || null);
-            setIsLoading(false);
-            return;
-        }
-
-        // ✅ Cancel any in-flight request before starting a new one
-        if (abortRef.current) {
-            abortRef.current.abort();
-        }
-        abortRef.current = new AbortController();
-
         setIsLoading(true);
         setError(null);
 
         try {
-            const res = await axios.get(`${API_URL}/products/${targetSlug}`, {
-                signal: abortRef.current.signal,
-                // ✅ Tell server to compress response
-                headers: { 'Accept-Encoding': 'gzip, deflate, br' },
-            });
+            const res = await axios.get(`${API_URL}/products/${targetSlug}`);
 
             if (res.data.success) {
                 const data = res.data.product;
-
-                // ✅ Cache by both the product's own slug AND all variant slugs
-                // so any variant navigation hits cache instantly
-                productCache.set(targetSlug, data);
-                data.product_variants?.forEach(v => {
-                    if (v.slug) productCache.set(v.slug, data);
-                });
-
                 setProduct(data);
                 const matchedVariant = data.product_variants?.find(v => v.slug === targetSlug);
                 setSelectedVariant(matchedVariant || data.product_variants?.[0] || null);
             }
         } catch (err) {
-            if (axios.isCancel(err) || err.name === 'CanceledError') return; // Ignore aborted
             console.error('Failed to load product', err);
             setError('Product not found or connection error');
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [API_URL]);
 
     useEffect(() => {
         fetchProduct(slug);
         window.scrollTo(0, 0);
-
-        return () => {
-            // ✅ Cancel request if component unmounts mid-fetch
-            abortRef.current?.abort();
-        };
     }, [slug, fetchProduct]);
 
-    // ✅ Variant switch: NO navigate() — just update state locally
-    // This avoids triggering a full re-fetch on every color change
-    const handleVariantChange = useCallback((variant) => {
+    const handleVariantChange = (variant) => {
         setSelectedVariant(variant);
         setActiveImage(0);
-        // Only update URL silently — don't re-trigger useEffect
         window.history.replaceState({}, '', `/product/${variant.slug}`);
-    }, []);
+    };
 
-    const handleBuyNow = useCallback(() => {
+    const handleBuyNow = () => {
         if (!selectedVariant) return;
         addItem({
             ...product,
@@ -113,18 +69,17 @@ const ProductDetail = () => {
             name: `${product.brand} ${product.name} - ${selectedVariant.color}`,
         });
         navigate('/checkout');
-    }, [product, selectedVariant, addItem, navigate]);
+    };
 
-    const handleAddToCart = useCallback(() => {
+    const handleAddToCart = () => {
         if (!selectedVariant) return;
         addItem({
             ...product,
             ...selectedVariant,
             name: `${product.brand} ${product.name} - ${selectedVariant.color}`,
         });
-    }, [product, selectedVariant, addItem]);
+    };
 
-    // ✅ Skeleton loader instead of full-screen spinner — perceived speed improvement
     if (isLoading) {
         return (
             <div className="flex flex-col min-h-screen bg-black pb-28 md:pb-0">
@@ -187,13 +142,10 @@ const ProductDetail = () => {
                             animate={{ opacity: 1, scale: 1 }}
                             className="aspect-square w-full rounded-3xl overflow-hidden glass border border-white/5 relative group"
                         >
-                            {/* ✅ Preload next image on hover for instant switching */}
                             <img
                                 src={images[activeImage]}
                                 alt={product.name}
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                loading="eager"
-                                fetchpriority="high"
                             />
                             <div className="absolute top-6 right-6 flex flex-col gap-3">
                                 <button className="p-3 rounded-full glass border-white/10 text-white/50 hover:text-red-500 transition-colors active:scale-90 shadow-xl">
@@ -213,17 +165,15 @@ const ProductDetail = () => {
                                         onClick={() => setActiveImage(i)}
                                         className={`aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 ${activeImage === i ? 'border-secondary' : 'border-white/5 hover:border-white/20'}`}
                                     >
-                                        {/* ✅ lazy load thumbnails */}
-                                        <img src={img} alt={`thumb-${i}`} className="w-full h-full object-cover" loading="lazy" />
+                                        <img src={img} alt={`thumb-${i}`} className="w-full h-full object-cover" />
                                     </button>
                                 ))}
                             </div>
                         )}
                     </div>
 
-                    {/* Right: Info — unchanged JSX below */}
+                    {/* Right: Info */}
                     <div className="flex flex-col gap-8">
-                        {/* ... rest of your existing JSX unchanged ... */}
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center gap-4">
                                 <Badge variant="primary" size="md">{product.brand}</Badge>
@@ -257,14 +207,13 @@ const ProductDetail = () => {
                         {product.product_variants?.length > 0 && (
                             <div className="flex flex-col gap-4 p-6 glass rounded-2xl border-white/5">
                                 <h4 className="text-xs font-black uppercase tracking-widest text-primary italic">Select Color Scheme</h4>
-                                <p className="text-[9px] font-black italic text-white/20 uppercase tracking-widest -mt-2">AVAILABLE AS ENTERED IN SYSTEM</p>
                                 <div className="flex flex-wrap gap-4">
                                     {product.product_variants.map((v) => (
                                         <button key={v.id} onClick={() => handleVariantChange(v)}
                                             className={`group relative flex flex-col items-center gap-3 p-1 transition-all ${selectedVariant?.id === v.id ? 'opacity-100' : 'opacity-40 hover:opacity-100'}`}>
                                             <div className={`w-12 h-12 rounded-full border-2 p-1 transition-all ${selectedVariant?.id === v.id ? 'border-secondary' : 'border-white/10 group-hover:border-white/40'}`}>
                                                 <div className="w-full h-full rounded-full shadow-inner overflow-hidden flex items-center justify-center bg-white/10">
-                                                    {v.image_urls?.[0] ? <img src={v.image_urls[0]} className="w-full h-full object-cover" loading="lazy" /> : <div className="w-full h-full bg-neutral-800" />}
+                                                    {v.image_urls?.[0] ? <img src={v.image_urls[0]} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-800" />}
                                                 </div>
                                             </div>
                                             <span className={`text-[8px] font-black uppercase tracking-tighter transition-all ${selectedVariant?.id === v.id ? 'text-white' : 'text-white/40'}`}>
@@ -283,14 +232,6 @@ const ProductDetail = () => {
                             <div className="text-sm font-medium text-white/60 leading-relaxed uppercase tracking-tighter whitespace-pre-wrap">
                                 {product.description || 'DYNAMIC PROTECTION SYSTEM DESIGNED FOR EXTREME PERFORMANCE.'}
                             </div>
-                            {product.bike_tags?.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-4">
-                                    <span className="text-[9px] font-black text-white/20 uppercase tracking-widest italic w-full">Compatible Bikes</span>
-                                    {product.bike_tags.map((tag, i) => (
-                                        <span key={i} className="bg-white/5 border border-white/5 rounded-lg px-3 py-1.5 text-[8px] font-black text-white/60 uppercase tracking-widest italic">{tag}</span>
-                                    ))}
-                                </div>
-                            )}
                         </div>
 
                         <div className="flex flex-col gap-4 mt-4">

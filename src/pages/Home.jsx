@@ -74,7 +74,6 @@ const BrandCard = ({ name, tagline, image, color, index }) => (
       <img
         src={image}
         alt={name}
-        loading="lazy"
         className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-110
                    group-hover:brightness-110 transition-all duration-500 ease-out"
       />
@@ -101,12 +100,6 @@ const BrandCard = ({ name, tagline, image, color, index }) => (
   </motion.div>
 );
 
-const homeCache = {
-  data: null,
-  timestamp: 0,
-};
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
 const Home = () => {
   const navigate = useNavigate();
   const heroRef = useRef(null);
@@ -118,7 +111,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [categories, setCategories] = useState([
-    { name: 'Helmets', icon: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=200&auto=format&fit=crop', path: '/shop?category=Helmets' },
+    { name: 'Helmets', icon: '/assets/BG1.png', path: '/shop?category=Helmets' },
     { name: 'Jackets', icon: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=200&auto=format&fit=crop', path: '/shop?category=Jackets' },
     { name: 'Gloves', icon: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=200&auto=format&fit=crop', path: '/shop?category=Gloves' },
     { name: 'Boots', icon: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop', path: '/shop?category=Boots' },
@@ -126,14 +119,6 @@ const Home = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      // Check cache first
-      if (homeCache.data && Date.now() - homeCache.timestamp < CACHE_DURATION) {
-        setCategories(homeCache.data.categories);
-        setFeaturedProducts(homeCache.data.featuredProducts);
-        setIsLoading(false);
-        return;
-      }
-
       try {
         const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://amstel-server.onrender.com/api';
         const res = await axios.get(`${API_URL}/products`);
@@ -147,15 +132,15 @@ const Home = () => {
           }, {});
 
           const iconMapping = {
-            'helmets': 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=200&auto=format&fit=crop',
-            'jackets': 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=200&auto=format&fit=crop',
-            'gloves': 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=200&auto=format&fit=crop',
-            'boots': 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200&auto=format&fit=crop'
+            'helmets': '/assets/Helmet.jpg',
+            'jackets': '/assets/Jacket.jpg',
+            'gloves': '/assets/Glove.jpg',
+            'boots': '/assets/Boots.jpg'
           };
 
           const dynamicCats = Object.keys(categoryGroups).map(catName => ({
             name: catName,
-            icon: iconMapping[catName.toLowerCase()] || 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=200&auto=format&fit=crop',
+            icon: iconMapping[catName.toLowerCase()] || '/assets/BG1.png',
             path: `/shop?category=${encodeURIComponent(catName)}`
           })).slice(0, 6);
 
@@ -173,10 +158,6 @@ const Home = () => {
             .slice(0, 15);
 
           setFeaturedProducts(finalProducts);
-
-          // Update cache
-          homeCache.data = { categories: finalCats, featuredProducts: finalProducts };
-          homeCache.timestamp = Date.now();
         }
       } catch (error) {
         console.error("Failed to load products", error);
@@ -193,55 +174,55 @@ const Home = () => {
       name: 'LS2',
       tagline: 'Racing Heritage',
       color: '#e63946',
-      image: '/LS2.jpeg',
+      image: '/assets/LS2.jpg',
     },
     {
       name: 'SMK',
       tagline: 'Precision Crafted',
       color: '#f4a261',
-      image: '/SMK.jpeg',
+      image: '/assets/SMK.jpg',
     },
     {
       name: 'MT',
       tagline: 'Born to Race',
       color: '#2ec4b6',
-      image: '/MT.jpeg',
+      image: '/assets/MT.jpg',
     },
     {
       name: 'Vega',
       tagline: 'Value & Safety',
       color: '#a8dadc',
-      image: '/VEGA.jpeg',
+      image: '/assets/VEGA.jpg',
     },
     {
       name: 'Steelbird',
       tagline: 'Indian Icon',
       color: '#f1faee',
-      image: '/SB.jpeg',
+      image: '/assets/SB.jpg',
     },
     {
       name: 'Royal Enfield',
       tagline: 'Classic Riders',
       color: '#e9c46a',
-      image: '/RE.jpeg',
+      image: '/assets/RE.jpg',
     },
     {
       name: 'Ryder',
       tagline: 'Ride in Style',
       color: '#e9c46a',
-      image: '/RYDER.jpeg',
+      image: '/assets/RYDER.jpg',
     },
     {
       name: 'Ridex',
       tagline: 'Riders Choice',
       color: '#e9c46a',
-      image: '/RIDEX.jpeg',
+      image: '/assets/RIDEX.jpg',
     },
     {
       name: 'Studds',
       tagline: 'Riders Gear',
       color: '#e9c46a',
-      image: '/STUDDS.jpeg',
+      image: '/assets/STUDDS.jpg',
     },
   ];
 
@@ -249,27 +230,27 @@ const Home = () => {
   const bikeBrands = [
     {
       name: 'Royal Enfield',
-      image: '/GT650.jpeg',
+      image: '/assets/GT650.jpg',
     },
     {
       name: 'KTM',
-      image: '/390.jpeg',
+      image: '/assets/390.jpg',
     },
     {
       name: 'Yamaha',
-      image: '/R15.jpeg',
+      image: '/assets/R15.jpg',
     },
     {
       name: 'Kawasaki',
-      image: '/z900.jpeg',
+      image: '/assets/z900.jpg',
     },
     {
       name: 'BMW',
-      image: '/S1000rr.jpeg',
+      image: '/assets/S1000rr.jpg',
     },
     {
       name: 'Bajaj',
-      image: "/NS200.jpeg",
+      image: "/assets/NS200.jpg",
     },
   ];
 
@@ -286,7 +267,7 @@ const Home = () => {
 
         <motion.div className="absolute inset-0 z-0" style={{ y: bgY, scale: bgScale }}>
           <img
-            src="/BG1.png"
+            src="/assets/BG1.png"
             alt="Hero"
             loading="eager"
             className="w-full h-full object-cover"
@@ -394,7 +375,6 @@ const Home = () => {
                   <img
                     src={cat.icon}
                     alt={cat.name}
-                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-125 group-hover:brightness-110"
                   />
                 </div>
@@ -468,7 +448,6 @@ const Home = () => {
                 <img
                   src={bike.image}
                   alt={bike.name}
-                  loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-110
                              group-hover:brightness-110 transition-all duration-500 ease-out"
                 />
@@ -537,9 +516,8 @@ const Home = () => {
       <section className="relative h-[55vh] md:h-[65vh] w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="/BG2.png"
+            src="/assets/BG2.png"
             alt="Promo"
-            loading="lazy"
             className="w-full h-full object-cover scale-105"
           />
           <div className="absolute inset-0 bg-black/70" />
@@ -608,7 +586,6 @@ const Home = () => {
                     <img
                       src={cat.icon}
                       alt={cat.name}
-                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:brightness-110"
                     />
                   </div>

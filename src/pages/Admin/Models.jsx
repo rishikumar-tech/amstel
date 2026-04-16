@@ -67,7 +67,7 @@ const smartCompress = async (file) => {
         console.info(`[smartCompress] Tier 2 — ${sizeKB} KB → light compression`);
         try {
             const compressed = await imageCompression(file, COMPRESSION_CONFIGS.light);
-            // Revert if compression somehow made it larger (e.g. PNG → JPEG on flat graphics)
+            // Revert if compression somehow made it larger (e.g. PNG → jpg on flat graphics)
             if (compressed.size >= file.size) {
                 console.info(`[smartCompress] Compressed >= original, reverting`);
                 return file;
@@ -734,11 +734,10 @@ const Models = () => {
                                                     : [...modelForm.bike_tags, bike.name];
                                                 setModelForm(p => ({ ...p, bike_tags: tags }));
                                             }}
-                                            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
-                                                isSelected
+                                            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${isSelected
                                                     ? 'bg-secondary text-white'
                                                     : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white'
-                                            }`}
+                                                }`}
                                         >
                                             {bike.name}
                                         </button>
@@ -897,7 +896,7 @@ const Models = () => {
                                     <input
                                         type="file"
                                         multiple
-                                        accept="image/png,image/jpeg,image/jpg,image/webp"
+                                        accept="image/png,image/jpg,image/jpg,image/webp"
                                         id="variant-image-upload"
                                         className="hidden"
                                         onChange={handleImageUpload}

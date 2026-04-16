@@ -86,7 +86,7 @@ const Navbar = () => {
                         {/* Logo Container */}
                         <div className="flex-shrink-0">
                             <img
-                                src="/AR LOGO.png"
+                                src="/assets/AR LOGO.png"
                                 alt="AR LOGO"
                                 className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 object-contain"
                             />

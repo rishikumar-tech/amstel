@@ -138,7 +138,7 @@ export const FullFooter = () => (
                 <div className="sm:col-span-2 lg:col-span-1 flex flex-col gap-6">
                     <NavLink to="/" className="flex items-center gap-3" aria-label="Amstel Riders Home">
                         <img
-                            src="/AR LOGO.png"
+                            src="/assets/AR LOGO.png"
                             alt="Amstel Riders Logo"
                             className="w-12 h-12 object-contain"
                             loading="lazy"
